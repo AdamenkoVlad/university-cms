@@ -1,0 +1,1 @@
+ALTER TABLE university.users ALTER COLUMN currency_mark SET DEFAULT 'USD';

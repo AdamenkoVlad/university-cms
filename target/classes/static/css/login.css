@@ -1,0 +1,21 @@
+#triggerModalButton {
+	display: none;
+}
+
+body {
+	background-image: url("/photo/background.jpg");
+}
+
+h1 {
+	color: whitesmoke;
+}
+
+label {
+	color: #021352;
+	font-weight: 800;
+}
+
+.color {
+	background-color: blue;
+	border: 2px solid #8d0396;
+}

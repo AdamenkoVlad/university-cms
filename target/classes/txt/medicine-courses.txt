@@ -1,0 +1,10 @@
+Medicine
+Nursing
+Pharmacy
+Dentistry
+Physical Therapy
+Occupational Therapy
+Veterinary Medicine
+Biomedical Sciences
+Radiology Technology
+Medical Laboratory Science

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+	<head
+		th:replace="~{fragments/general.html :: head(description='The page to visualize a form to update a Teacher', title='Update teacher')}">
+	</head>
+	<link href="/css/teacher-update.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+	<div class="container">
+		<main>
+			<div class="row">
+				<div class="col-xs-12 text-center">
+					<h1 class="class-h1">Update teacher</h1>
+				</div>
+			</div>
+			<div class="row justify-content-center my-3">
+				<div class="col-lg-6">
+					<form action="/teachers/save" th:object="${teacher}" method="POST">
+						<div class="row">
+							<input type="hidden" id="csrf" th:attr="name=${_csrf.parameterName},value=${_csrf.token}" />
+							<input type="hidden" name="viewName" value="teacher-update">
+							<input type="hidden" name="referer" th:value="${referer}">
+							<input type="hidden" th:field="*{password}">
+							<div class="col-sm-6">
+								<input type="hidden" th:field="*{id}">
+								<div class="row">
+									<div class="col-xs-12">
+										<div class="form-floating my-3">
+											<input type="text" id="name" class="form-control" th:field="*{name}"
+												required
+												th:classappend="${integrityExceptions != null or (validationExceptions != null and 
+												!#sets.contains(validationExceptions.![#strings.toString(propertyPath)], 'save.teacherDto.name'))} ? 'is-valid' : ''">
+											<label for="name" class="form-label">Full name:</label>
+											<span th:if="${validationExceptions != null}">
+												<span th:each="validationException : ${validationExceptions}">
+													<span
+														th:if="${'' + validationException.propertyPath == 'save.teacherDto.name'}">
+														<div class="alert alert-warning custom-alert">
+															<ul>
+																<li th:text="${validationException.message}"></li>
+															</ul>
+														</div>
+													</span>
+												</span>
+											</span>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<div class="form-floating my-3">
+											<select id="gender" class="form-select" th:field="*{gender}"
+												th:classappend="${integrityExceptions != null or validationExceptions != null} ? 'is-valid' : ''">
+												<option th:value="M">Men</option>
+												<option th:value="W">Woman</option>
+											</select>
+											<label for="gender" class="form-label">Gender:</label>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<div class="form-floating my-3">
+											<input type="date" id="birthDate" class="form-control"
+												th:field="*{birthDate}" required
+												th:classappend="${integrityExceptions != null or (validationExceptions != null and 
+												!#sets.contains(validationExceptions.![#strings.toString(propertyPath)], 'save.teacherDto.birthDate'))} ? 'is-valid' : ''">
+											<label for="birthDate" class="form-label">Birth date:</label>
+											<span th:if="${validationExceptions != null}">
+												<span th:each="validationException : ${validationExceptions}">
+													<span
+														th:if="${'' + validationException.propertyPath == 'save.teacherDto.birthDate'}">
+														<div class="alert alert-warning custom-alert">
+															<ul>
+																<li th:text="${validationException.message}"></li>
+															</ul>
+														</div>
+													</span>
+												</span>
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-6 position">
+								<input type="hidden" id="photoId" name="photoId" th:field="*{photoUuid}">
+								<input type="file" id="file" name="file">
+								<label for="file" id="photoLabel">
+									<img id="imagePreview"
+										th:src="*{photoUuid != null ? '/avatars/' + photoUuid : '/photo/default-person-photo.png'}"
+										alt="Image Preview" />
+								</label>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-floating my-3">
+									<input type="text" id="email" class="form-control" th:field="*{email}" required
+										th:classappend="${(validationExceptions != null and !#sets.contains(validationExceptions.![#strings.toString(propertyPath)], 'save.teacherDto.email')) or
+									 (integrityExceptions != null and !#sets.contains(integrityExceptions.![field], 'email')) } ? 'is-valid' : ''">
+									<label for="email" class="form-label">Email:</label>
+									<span th:if="${validationExceptions != null}">
+										<span th:each="validationException : ${validationExceptions}">
+											<span
+												th:if="${'' + validationException.propertyPath == 'save.teacherDto.email'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${validationException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</span>
+									</span>
+									<span th:if="${integrityExceptions != null}">
+										<span th:each="integrityException : ${integrityExceptions}">
+											<span th:if="${integrityException.field == 'email'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${integrityException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</span>
+									</span>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form-floating my-3">
+									<input type="tel" id="telephoneNumber" class="form-control"
+										th:field="*{telephoneNumber}" required
+										th:classappend="${(validationExceptions != null and !#sets.contains(validationExceptions.![#strings.toString(propertyPath)], 'save.teacherDto.telephoneNumber')) or
+									 (integrityExceptions != null and !#sets.contains(integrityExceptions.![field], 'telephoneNumber')) } ? 'is-valid' : ''">
+									<label for="telephoneNumber" class="form-label">Telephone number:</label>
+									<span th:if="${validationExceptions != null}">
+										<span th:each="validationException : ${validationExceptions}">
+											<span
+												th:if="${'' + validationException.propertyPath == 'save.teacherDto.telephoneNumber'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${validationException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</span>
+									</span>
+									<span th:if="${integrityExceptions != null}">
+										<span th:each="integrityException : ${integrityExceptions}">
+											<span th:if="${integrityException.field == 'telephoneNumber'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${integrityException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</span>
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-12">
+								<div class="form-floating my-3">
+									<input type="text" id="residenceAddress" class="form-control"
+										th:field="*{residenceAddress}" required
+										th:classappend="${integrityExceptions != null or (validationExceptions != null and 
+										!#sets.contains(validationExceptions.![#strings.toString(propertyPath)], 'save.teacherDto.residenceAddress'))} ? 'is-valid' : ''">
+									<label for="residenceAddress" class="form-label">Residence address:</label>
+									<span th:if="${validationExceptions != null}">
+										<span th:each="validationException : ${validationExceptions}">
+											<span
+												th:if="${'' + validationException.propertyPath == 'save.teacherDto.residenceAddress'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${validationException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</span>
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-4">
+								<div class="form-floating my-3">
+									<input type="date" id="employmentDate" class="form-control"
+										th:field="*{employmentDate}" required
+										th:classappend="${integrityExceptions != null or (validationExceptions != null and 
+										!#sets.contains(validationExceptions.![#strings.toString(propertyPath)], 'save.teacherDto.employmentDate'))} ? 'is-valid' : ''">
+									<label for="employmentDate" class="form-label">Employment date:</label>
+									<span th:if="${validationExceptions != null}">
+										<span th:each="validationException : ${validationExceptions}">
+											<span
+												th:if="${'' + validationException.propertyPath == 'save.teacherDto.employmentDate'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${validationException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</span>
+									</span>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="form-floating my-3">
+									<input type="text" id="position" class="form-control" th:field="*{position}"
+										required
+										th:classappend="${integrityExceptions != null or (validationExceptions != null and 
+										!#sets.contains(validationExceptions.![#strings.toString(propertyPath)], 'save.teacherDto.position'))} ? 'is-valid' : ''">
+									<label for="position" class="form-label">Position:</label>
+									<span th:if="${validationExceptions != null}">
+										<span th:each="validationException : ${validationExceptions}">
+											<span
+												th:if="${'' + validationException.propertyPath == 'save.teacherDto.position'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${validationException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</span>
+									</span>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="form-floating my-3">
+									<select id="workingShift" class="form-select" th:field="*{workingShift}"
+										th:classappend="${integrityExceptions != null or validationExceptions != null} ? 'is-valid' : ''">
+										<option th:value="FULL_TIME">Full time</option>
+										<option th:value="PART_TIME">Part time</option>
+									</select>
+									<label for="workingShift" class="form-label">Working shift:</label>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-floating my-3">
+									<input type="text" id="passportNumber" class="form-control"
+										th:field="*{passportNumber}" required
+										th:classappend="${(validationExceptions != null and !#sets.contains(validationExceptions.![#strings.toString(propertyPath)], 'save.teacherDto.passportNumber')) or
+															 (integrityExceptions != null and !#sets.contains(integrityExceptions.![field], 'passportNumber')) } ? 'is-valid' : ''">
+									<label for="passportNumber" class="form-label">Passport number:</label>
+									<span th:if="${validationExceptions != null}">
+										<sapn th:each="validationException : ${validationExceptions}">
+											<span
+												th:if="${'' + validationException.propertyPath == 'save.teacherDto.passportNumber'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${validationException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</sapn>
+									</span>
+									<span th:if="${integrityExceptions != null}">
+										<span th:each="integrityException : ${integrityExceptions}">
+											<span th:if="${integrityException.field == 'passportNumber'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${integrityException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</span>
+									</span>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form-floating my-3">
+									<input type="text" id="position" class="form-control" th:field="*{scientificDegree}"
+										required
+										th:classappend="${integrityExceptions != null or (validationExceptions != null and 
+																!#sets.contains(validationExceptions.![#strings.toString(propertyPath)], 'save.teacherDto.scientificDegree'))} ? 'is-valid' : ''">
+									<label for="position" class="form-label">Scientific degree:</label>
+									<span th:if="${validationExceptions != null}">
+										<span th:each="validationException : ${validationExceptions}">
+											<span
+												th:if="${'' + validationException.propertyPath == 'save.teacherDto.scientificDegree'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${validationException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</span>
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-12">
+								<div class="form-floating my-3">
+									<input type="text" id="login" class="form-control" th:field="*{login}" required
+										th:classappend="${(validationExceptions != null and !#sets.contains(validationExceptions.![#strings.toString(propertyPath)], 'save.teacherDto.login')) or
+									 (integrityExceptions != null and !#sets.contains(integrityExceptions.![field], 'login')) } ? 'is-valid' : ''">
+									<label for="login" class="form-label">Login:</label>
+									<span th:if="${validationExceptions != null}">
+										<sapn th:each="validationException : ${validationExceptions}">
+											<span
+												th:if="${'' + validationException.propertyPath == 'save.teacherDto.login'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${validationException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</sapn>
+									</span>
+									<span th:if="${integrityExceptions != null}">
+										<span th:each="integrityException : ${integrityExceptions}">
+											<span th:if="${integrityException.field == 'login'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${integrityException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</span>
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-floating my-3">
+									<input type="text" id="salaryAmount" class="form-control" th:field="*{salaryAmount}"
+										required
+										th:classappend="${integrityExceptions != null or (validationExceptions != null and 
+										!#sets.contains(validationExceptions.![#strings.toString(propertyPath)], 'save.teacherDto.salaryAmount'))} ? 'is-valid' : ''">
+									<label for="salaryAmount" class="form-label">Salary amount:</label>
+									<span th:if="${validationExceptions != null}">
+										<sapn th:each="validationException : ${validationExceptions}">
+											<span
+												th:if="${'' + validationException.propertyPath == 'save.teacherDto.salaryAmount'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${validationException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</sapn>
+									</span>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form-floating my-3">
+									<input type="text" id="currencyMark" class="form-control" th:field="*{currencyMark}"
+										required
+										th:classappend="${integrityExceptions != null or (validationExceptions != null and 
+									!#sets.contains(validationExceptions.![#strings.toString(propertyPath)], 'save.teacherDto.currencyMark'))} ? 'is-valid' : ''">
+									<label for="currencyMark" class="form-label">Currency mark:</label>
+									<span th:if="${validationExceptions != null}">
+										<sapn th:each="validationException : ${validationExceptions}">
+											<span
+												th:if="${'' + validationException.propertyPath == 'save.teacherDto.currencyMark'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${validationException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</sapn>
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-6 text-end">
+								<a th:href="${referer}">
+									<button type="button" class="btn btn-danger btn-lg">Undo</button>
+								</a>
+							</div>
+							<div class="col-sm-6 text-start">
+								<button type="submit" class="btn btn-primary btn-lg">Update</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</main>
+	</div>
+	<script src="/js/teacherUpdate.js"></script>
+	<script src="/webjars/bootstrap/5.3.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

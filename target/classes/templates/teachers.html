@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+	<head
+		th:replace="~{fragments/general.html :: head(description='The page to visualize all available teachers',title='Teachers')}">
+	</head>
+	<link href="/css/teachers.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+	<nav th:replace="~{fragments/general.html :: navbar(${principal})}"></nav>
+	<div sec:authorize="hasRole('ADMINISTRATOR')" th:replace="~{fragments/general.html :: teacherModels(${teachers})}">
+	</div>
+	<div th:replace="~{fragments/general.html :: principalModel(${principal})}"></div>
+	<div class="container-fluid">
+		<main>
+			<div class="row">
+				<div class="col-md-4">
+					<a href="/teachers">
+						<h1>Teachers</h1>
+					</a>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<a sec:authorize="hasRole('ADMINISTRATOR')" href="/teachers/new">
+						<button class="create-button">Create</button>
+					</a>
+				</div>
+				<div class="col-sm-6">
+					<nav class="navbar navbar-expand-lg">
+						<div class="container-fluid">
+							<div class="collapse navbar-collapse" id="navbarSupportedContent">
+								<form action="#" id="searchForm" class="d-flex ms-auto" method="GET">
+									<input th:if="${purpose == 'addToCourse'}" type="hidden" name="courseId" th:value=${courseId}>
+									<input th:if="${purpose == 'addToCourse'}" type="hidden" name="purpose" value="addToCourse">
+									<div class="me-2">
+										<input id="searchInput" class="form-control" type="number" placeholder="Search"
+											aria-label="Search">
+									</div>
+									<button class="btn btn-success me-2" type="submit">Search</button>
+									<div class="btn-group dropup">
+										<button type="button" class="btn btn-secondary dropdown-toggle"
+											data-bs-toggle="dropdown" aria-expanded="false">
+											Search by
+										</button>
+										<ul class="dropdown-menu dropdown-menu-lg-end text-menu"
+											aria-labelledby="dropdownMenuClickableInside">
+											<li><a id="idLink" class="dropdown-item" data-type="number">id</a></li>
+											<li><a id="loginLink" class="dropdown-item" data-type="text">login</a></li>
+											<li sec:authorize="hasRole('ADMINISTRATOR')"><a id="passportLink"
+													class="dropdown-item" data-type="text">passport number</a></li>
+											<li sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')"><a
+													id="telephoneLink" class="dropdown-item" data-type="text">telephone
+													number</a></li>
+											<li><a id="nameLink" class="dropdown-item" data-type="text">name</a></li>
+											<li><a id="courseNameLink" class="dropdown-item" data-type="text">course
+													name</a></li>
+											<li><a id="courseIdLink" class="dropdown-item" data-type="number">course
+													id</a></li>
+											<li><a id="lessonIdLink" class="dropdown-item" data-type="number">lesson
+													id</a></li>
+										</ul>
+									</div>
+								</form>
+							</div>
+						</div>
+					</nav>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12">
+					<table class="table-responsive-md table table-hover table-striped my-custom-table">
+						<thead>
+							<tr>
+								<th scope="col">Id</th>
+								<th scope="col">Name</th>
+								<th scope="col">Photo</th>
+								<th scope="col">Birth date</th>
+								<th scope="col">Gender</th>
+								<th sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')" scope="col">Email
+								</th>
+								<th sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')" scope="col">Telephone
+									number</th>
+								<th sec:authorize="hasRole('ADMINISTRATOR')" scope="col">Address</th>
+								<th sec:authorize="hasRole('ADMINISTRATOR')" scope="col">Passport</th>
+								<th sec:authorize="hasRole('ADMINISTRATOR')" scope="col">Salary</th>
+								<th sec:authorize="hasRole('ADMINISTRATOR')" scope="col">Currency</th>
+								<th scope="col">Employment date</th>
+								<th scope="col">Scientific degree</th>
+								<th scope="col">Position</th>
+								<th scope="col">Working shift</th>
+								<th th:if="${purpose == 'addToCourse'}" scope="col">Available</th>
+								<th class="my-custom-border" sec:authorize="hasRole('ADMINISTRATOR')" scope="col">Action
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr id="rowButton"
+								th:classappend="${#authorization.expression('hasRole(''ADMINISTRATOR'')')} ? 'hoverable-row' : ''"
+								th:each="teacher : ${teachers}" onclick="openModal(event)">
+								<th scope="row" th:text="${teacher.id}"></th>
+								<td th:text="${teacher.name}"></td>
+								<td>
+									<button th:disabled="${!#authorization.expression('hasRole(''ADMINISTRATOR'')')}"
+										class="row-photo-button"
+										th:attr="data-bs-target='#exampleModal' + ${teacher.id}" data-bs-toggle="modal">
+										<img class="m-0 p-0"
+											th:src="${teacher.photoUuid != null ? '/avatars/' + teacher.photoUuid : '/photo/default-person-photo.png'}"
+											alt="Person photo" />
+									</button>
+								</td>
+								<td th:text="${teacher.birthDate}"></td>
+								<td th:text="${teacher.gender}"></td>
+								<td sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')"
+									th:text="${teacher.email}"></td>
+								<td sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')"
+									th:text="${teacher.telephoneNumber}"></td>
+								<td sec:authorize="hasRole('ADMINISTRATOR')" th:text="${teacher.residenceAddress}"></td>
+								<td sec:authorize="hasRole('ADMINISTRATOR')" th:text="${teacher.passportNumber}"></td>
+								<td sec:authorize="hasRole('ADMINISTRATOR')" th:text="${teacher.salaryAmount}"></td>
+								<td sec:authorize="hasRole('ADMINISTRATOR')" th:text="${teacher.currencyMark}"></td>
+								<td th:text="${teacher.employmentDate}"></td>
+								<td th:text="${teacher.scientificDegree}"></td>
+								<td th:text="${teacher.position}"></td>
+								<td th:text="${teacher.workingShift}"></td>
+								<td th:if="${purpose == 'addToCourse'}">
+									<form th:action="@{/courses/addTeacherToCourseById/{teacherId}/teacherId/{courseId}/courseId (teacherId=${teacher.id}, courseId=${courseId})}" method="POST">
+										<button type="submit" class="btn btn-outline-success">Add teacher</button>
+									</form>
+								</td>
+								<td class="my-custom-border" sec:authorize="hasRole('ADMINISTRATOR')">
+									<a th:href="@{/teachers/{id}/update (id=${teacher.id})}">
+										<button type="button" class="update-button">Update</button>
+									</a>
+									<br>
+									<form th:action="@{/teachers/{id}/delete (id=${teacher.id})}" method="POST">
+										<button type="submit" class="delete-button">Delete</button>
+									</form>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div th:unless="${teachers.size() > 0}">
+						<div class="row">
+							<div class="col-xs-12 text-center mt-4">
+								<span>No teachers found!</span>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12">
+							<nav
+								th:replace="~{fragments/general :: pagination(${currentPagePath}, ${currentPage}, ${totalPages}, ${page}, ${pageSize})}">
+							</nav>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
+	<script src="/js/teachers.js"></script>
+	<script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+	<script src="/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

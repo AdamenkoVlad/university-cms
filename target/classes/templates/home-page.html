@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+	<head th:replace="~{fragments/general.html :: head(description='The home page of all entities',title='Home page')}">
+	</head>
+	<link href="/css/home-page.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+	<nav th:replace="~{fragments/general.html :: navbar(${principal})}"></nav>
+	<div th:replace="~{fragments/general.html :: principalModel(${principal})}"></div>
+	<div class="container position-absolute top-50 start-50 translate-middle">
+		<main>
+			<div class="row">
+				<div class="col-xs-12 text-center">
+					<h1>CMS</h1>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12 text-center mb-3">
+					<h2>University</h2>
+				</div>
+			</div>
+			<script src="/webjars/bootstrap/5.3.2/js/bootstrap.min.js"></script>
+		</main>
+	</div>
+</body>
+
+</html>

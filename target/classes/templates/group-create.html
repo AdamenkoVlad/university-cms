@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<head
+		th:replace="~{fragments/general.html :: head(description='The page to create a new group', title='Create group')}">
+	</head>
+	<link href="/css/group-create.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+	<div class="container">
+		<main>
+			<div class="row">
+				<div class="col-xs-12 text-center">
+					<h1 class="class-h1">Create group</h1>
+				</div>
+			</div>
+			<div class="row justify-content-center my-3">
+				<div class="col-lg-6">
+					<form action="/groups/save" th:object="${group}" method="POST">
+						<input type="hidden" id="csrf" th:attr="name=${_csrf.parameterName},value=${_csrf.token}" />
+						<input type="hidden" name="viewName" value="group-create">
+						<input type="hidden" name="referer" th:value="${referer}">
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-floating my-3">
+									<select id="specialization" class="form-select" th:field="*{specialization}">
+										<option th:value="COMPUTER_SCIENCE">Computer science</option>
+										<option th:value="MEDICINE">Medicine</option>
+										<option th:value="ECONOMICS">Economics</option>
+										<option th:value="ART">Art</option>
+									</select>
+									<label for="specialization" class="form-label">Specialization:</label>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form-floating my-3">
+									<input type="text" id="groupName" class="form-control" th:field="*{groupName}"
+										required
+										th:classappend="${validationExceptions != null and 
+									!#sets.contains(validationExceptions.![#strings.toString(propertyPath)], 'save.groupDto.groupName')} ? 'is-valid' : ''">
+									<label for="groupName" class="form-label">Group name</label>
+									<span th:if="${validationExceptions != null}">
+										<span th:each="validationException : ${validationExceptions}">
+											<span
+												th:if="${'' + validationException.propertyPath == 'save.groupDto.groupName'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${validationException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</span>
+									</span>
+									<span th:if="${integrityExceptions != null}">
+										<span th:each="integrityException : ${integrityExceptions}">
+											<span th:if="${integrityException.field == 'groupName'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${integrityException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</span>
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-6 text-end">
+								<a th:href="${referer}">
+									<button type="button" class="btn btn-danger btn-lg">Undo</button>
+								</a>
+							</div>
+							<div class="col-sm-6 text-start">
+								<button type="submit" class="btn btn-primary btn-lg">Create</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</main>
+	</div>
+	<script src="/webjars/bootstrap/5.3.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

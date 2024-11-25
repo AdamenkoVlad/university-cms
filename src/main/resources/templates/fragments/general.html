@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head th:fragment="head(description, title)">
+	<meta charset="UTF-8">
+	<meta name="author" content="Andrei Kurbatov">
+	<meta name="description" th:content="${description}">
+	<link rel="stylesheet" href="/webjars/bootstrap/5.3.2/css/bootstrap.min.css">
+	<link rel="icon" href="/photo/cms-icon.png" type="image/x-icon">
+	<title th:text="${title}"></title>
+</head>
+<body>
+	<a th:fragment="paging(currentPagePath, pageNum, label, tooltip, pageSize)" class="page-link"
+		th:href="@{${currentPagePath} + (${#strings.contains(currentPagePath, '?')} ? '&' : '?') + 'page=' + ${pageNum} + '&size=' + ${pageSize}}"
+		th:title="${tooltip}" rel="tooltip">
+		[[${label}]]
+	</a>
+	<nav th:fragment="navbar(dto)" class="navbar navbar-expand-lg bg-primary">
+		<div class="container">
+			<a class="navbar-brand" href="/">
+				<img src="/photo/cms-icon.png" alt="cms icon">
+			</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+				data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+					<li sec:authorize="hasRole('TEACHER') or hasRole('STUDENT')" class="nav-item">
+						<a class="nav-link active" id="timetableRef" aria-current="page" href="/timetable">Timetable</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link active" id="studentsRef" aria-current="page" href="/students">Students</a>
+					</li>
+					<li sec:authorize="hasRole('ADMINISTRATOR')" class="nav-item">
+						<a class="nav-link active" id="administratorsRef" aria-current="page" href="/administrators">Administrators</a>
+					</li>
+					<li sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')" class="nav-item">
+						<a class="nav-link active" id="teachersRef" aria-current="page" href="/teachers">Teachers</a>
+					</li>
+					
+					<li sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')" class="nav-item">
+						<a class="nav-link active" id="coursesRef" aria-current="page" href="/courses">Courses</a>
+					</li>
+					<li sec:authorize="hasRole('STUDENT')" class="nav-item">
+						<a class="nav-link active" id="coursesForStudentRef" aria-current="page" th:href="@{/courses/{studentId}/findAllByStudentId (studentId=${dto.id})}">Courses</a>
+					</li>
+					
+					<li sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')" class="nav-item">
+						<a class="nav-link active" id="groupsRef" aria-current="page" href="/groups">Groups</a>
+					</li>
+					<li sec:authorize="hasRole('STUDENT')" class="nav-item">
+						<a class="nav-link active" id="groupsForStudentRef" aria-current="page" th:href="@{/groups/{studentId}/findByStudentId (studentId=${dto.id})}">Groups</a>
+					</li>
+					
+					<li sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')" class="nav-item">
+						<a class="nav-link active" id="lessonsRef" aria-current="page" href="/lessons">Lessons</a>
+					</li>
+					<li sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')" class="nav-item">
+						<a class="nav-link active" id="roomsRef" aria-current="page" href="/rooms">Rooms</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<button type="button" class="badge-button" th:attr="data-bs-target='#exampleModal' + ${dto.login}"
+			data-bs-toggle="modal">
+			<div class="person-badge">
+				<img th:src="${dto.photoUuid != null ? '/avatars/' + dto.photoUuid : '/photo/default-person-photo.png'}"
+					class="person-badge-photo" alt="cms icon">
+				<div class="text-part">
+					<div class="row text-center">
+						<p class="square-text-up">[[${dto.name}]]</p>
+					</div>
+					<div class="row text-center">
+						<p class="square-text-down">[[${dto.role}]]</p>
+					</div>
+				</div>
+			</div>
+		</button>
+	</nav>
+	<div th:fragment="administratorModels(administrators)">
+		<div class="modal fade" th:each="administrator : ${administrators}" th:id="'exampleModal' + ${administrator.id}"
+			tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg user-model">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">[[${administrator.role}]]</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Full name:</b> [[${administrator.name}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Gender:</b> [[${administrator.gender}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Birth date:</b> [[${administrator.birthDate}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Email:</b> <a class="reference"
+											th:href="${'mailto:' + administrator.email}">[[${administrator.email}]]</a>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Telephone number:</b> [[${administrator.telephoneNumber}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Employment date:</b> [[${administrator.employmentDate}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Position:</b> [[${administrator.position}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Passport number:</b> [[${administrator.passportNumber}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Working shift:</b> [[${administrator.workingShift}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Login:</b> [[${administrator.login}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Residence address:</b> [[${administrator.residenceAddress}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Salary amount:</b> [[${administrator.salaryAmount}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Currency mark:</b> [[${administrator.currencyMark}]]
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-6 position">
+								<img id="imagePreview" class="user-photo"
+									th:src="${administrator.photoUuid != null ? '/avatars/' + administrator.photoUuid : '/photo/default-person-photo.png'}"
+									alt="Image Preview" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div th:fragment="studentModels(students)">
+		<div class="modal fade" th:each="student : ${students}" th:id="'exampleModal' + ${student.id}" tabindex="-1"
+			aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg user-model">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">[[${student.role}]]</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Full name:</b> [[${student.name}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Gender:</b> [[${student.gender}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Birth date:</b> [[${student.birthDate}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Email:</b> <a class="reference"
+											th:href="${'mailto:' + student.email}">[[${student.email}]]</a>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Telephone number:</b> [[${student.telephoneNumber}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Admission date:</b> [[${student.admissionDate}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Specialization:</b> [[${student.specialization}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Passport number:</b> [[${student.passportNumber}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Current semester:</b> [[${student.currentSemester}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Login:</b> [[${student.login}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Residence address:</b> [[${student.residenceAddress}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Scholarship amount:</b> [[${student.scholarshipAmount}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Currency mark:</b> [[${student.currencyMark}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Group id:</b> [[${student.groupId}]]
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-6 position">
+								<img id="imagePreview" class="user-photo"
+									th:src="${student.photoUuid != null ? '/avatars/' + student.photoUuid : '/photo/default-person-photo.png'}"
+									alt="Image Preview" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div th:fragment="teacherModels(teachers)">
+		<div class="modal fade" th:each="teacher : ${teachers}" th:id="'exampleModal' + ${teacher.id}" tabindex="-1"
+			aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg user-model">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">[[${teacher.role}]]</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Full name:</b> [[${teacher.name}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Gender:</b> [[${teacher.gender}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Birth date:</b> [[${teacher.birthDate}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Email:</b> <a class="reference"
+											th:href="${'mailto:' + teacher.email}">[[${teacher.email}]]</a>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Telephone number:</b> [[${teacher.telephoneNumber}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Employment date:</b> [[${teacher.employmentDate}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Position:</b> [[${teacher.position}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Passport number:</b> [[${teacher.passportNumber}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Login:</b> [[${teacher.login}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Residence address:</b> [[${teacher.residenceAddress}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Salary amount:</b> [[${teacher.salaryAmount}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Currency mark:</b> [[${teacher.currencyMark}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Working shift:</b> [[${teacher.workingShift}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Scientific degree:</b> [[${teacher.scientificDegree}]]
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-6 position">
+								<img id="imagePreview" class="user-photo"
+									th:src="${teacher.photoUuid != null ? '/avatars/' + teacher.photoUuid : '/photo/default-person-photo.png'}"
+									alt="Image Preview" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div th:fragment="principalModel(userDto)">
+		<div class="modal fade" th:id="'exampleModal' + ${userDto.login}" tabindex="-1"
+			aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog user-model">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">[[${userDto.role}]]</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-xs-12">
+								<div class="row">
+									<div class="col-xs-12 text-center">
+										<img id="imagePreview" class="user-photo"
+											th:src="${userDto.photoUuid != null ? '/avatars/' + userDto.photoUuid : '/photo/default-person-photo.png'}"
+											alt="Image Preview" />
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Full name:</b> [[${userDto.name}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Gender:</b> [[${userDto.gender}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Birth date:</b> [[${userDto.birthDate}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Email:</b> <a class="reference"
+											th:href="${'mailto:' + userDto.email}">[[${userDto.email}]]</a>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Passport number:</b> [[${userDto.passportNumber}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Login:</b> [[${userDto.login}]]
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<b>Residence address:</b> [[${userDto.residenceAddress}]]
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<a href="/login?logout">
+								<button type="button" class="btn btn-danger">logout</button>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<nav th:fragment="pagination(currentPagePath, currentPage, totalPages, page, pageSize)"
+		aria-label="Search results pages" th:if="${totalPages > 0}">
+		<ul class="pagination justify-content-center">
+			<li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+				<a
+					th:replace="~{fragments/general :: paging(${currentPagePath}, 1, '<<', 'First Page', ${pageSize})}"></a>
+			</li>
+			<li class="page-item font-weight-bold" th:classappend="${currentPage == 1} ? 'disabled'">
+				<a
+					th:replace="~{fragments/general :: paging(${currentPagePath}, ${currentPage - 1}, 'Prev', 'Previous Page', ${pageSize})}"></a>
+			</li>
+			<li class="page-item disabled" th:if="${currentPage - 2 > 1}">
+				<a class="page-link" href="#">...</a>
+			</li>
+			<li class="page-item" th:classappend="${page == currentPage} ? 'active'"
+				th:each="page : ${#numbers.sequence(currentPage > 2 ? currentPage - 2 : 1, currentPage + 2 < totalPages ? currentPage + 2 : totalPages)}">
+				<a
+					th:replace="~{fragments/general :: paging(${currentPagePath}, ${page}, ${page}, 'Page ' + ${page},  ${pageSize})}"></a>
+			</li>
+			<li class="page-item disabled" th:if="${currentPage + 2 < totalPages}">
+				<a class="page-link" href="#">...</a>
+			</li>
+			<li class="page-item font-weight-bold" th:classappend="${currentPage == totalPages} ? 'disabled'">
+				<a
+					th:replace="~{fragments/general :: paging(${currentPagePath}, ${currentPage + 1},'Next', 'Next Page', ${pageSize})}"></a>
+			</li>
+			<li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+				<a
+					th:replace="~{fragments/general :: paging(${currentPagePath}, ${totalPages}, '>>', 'Last Page', ${pageSize})}"></a>
+			</li>
+		</ul>
+	</nav>
+</body>
+
+</html>

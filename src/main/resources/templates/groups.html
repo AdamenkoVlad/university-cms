@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+	<head
+		th:replace="~{fragments/general.html :: head(description='The page to visualize all available groups',title='Groups')}">
+	</head>
+	<link href="/css/groups.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+	<nav th:replace="~{fragments/general.html :: navbar(${principal})}"></nav>
+	<div th:replace="~{fragments/general.html :: principalModel(${principal})}"></div>
+	<div class="container-fluid">
+		<main>
+			<div class="row">
+				<div class="col-md-4">
+					<a href="/groups">
+						<h1>Groups</h1>
+					</a>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<a sec:authorize="hasRole('ADMINISTRATOR')" href="/groups/new">
+						<button class="create-button">Create</button>
+					</a>
+				</div>
+				<div class="col-sm-6">
+					<nav class="navbar navbar-expand-lg">
+						<div class="container-fluid">
+							<div class="collapse navbar-collapse" id="navbarSupportedContent">
+								<form action="#" id="searchForm" class="d-flex ms-auto" method="GET">
+									<div class="me-2">
+										<input id="searchInput" class="form-control" type="number" placeholder="Search"
+											aria-label="Search">
+									</div>
+									<button class="btn btn-success me-2" type="submit">Search</button>
+									<div class="btn-group dropup">
+										<button type="button" class="btn btn-secondary dropdown-toggle"
+											data-bs-toggle="dropdown" aria-expanded="false">
+											Search by
+										</button>
+										<ul class="dropdown-menu dropdown-menu-lg-end text-menu"
+											aria-labelledby="dropdownMenuClickableInside">
+											<li><a id="idLink" class="dropdown-item" data-type="number">id</a></li>
+											<li><a id="groupNameLink" class="dropdown-item" data-type="text">group
+													name</a></li>
+											<li><a id="specializationLink" class="dropdown-item"
+													data-type="text">specialization</a></li>
+											<li><a id="studentAmountLink" class="dropdown-item"
+													data-type="number">student amount</a></li>
+										</ul>
+									</div>
+								</form>
+							</div>
+						</div>
+					</nav>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12">
+					<table class="table-responsive-md table table-hover table-striped my-custom-table">
+						<thead>
+							<tr>
+								<th scope="col">Id</th>
+								<th scope="col">Group name</th>
+								<th scope="col">Specialization</th>
+								<th sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')" scope="col">Student management</th>
+								<th class="my-custom-border" sec:authorize="hasRole('ADMINISTRATOR')" scope="col">Action
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="group : ${groups}">
+								<th scope="row" th:text="${group.id}"></th>
+								<td th:text="${group.groupName}"></td>
+								<td th:text="${group.specialization}"></td>
+								<td sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')">
+									<a th:href="@{/students/{specialization}/findAllBySpecialization?purpose=addToGroup&groupId={groupId} (specialization=${group.specialization}, groupId=${group.id})}">
+										<button type="button" class="btn btn-outline-success">Add students</button>
+									</a>
+									<a th:href="@{/students/{groupName}/findAllByGroupName?purpose=deleteFromGroup&groupId={groupId} (groupName=${group.groupName}, groupId=${group.id})}">
+										<button type="button" class="btn btn-outline-warning">Manage students</button>
+									</a>
+								</td>
+								<td class="my-custom-border" sec:authorize="hasRole('ADMINISTRATOR')">
+									<a th:href="@{/groups/{id}/update (id=${group.id})}">
+										<button type="button" class="update-button">Update</button>
+									</a>
+									<br>
+									<form th:action="@{/groups/{id}/delete (id=${group.id})}" method="POST">
+										<button type="submit" class="delete-button">Delete</button>
+									</form>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div th:unless="${groups.size() > 0}">
+						<div class="row">
+							<div class="col-xs-12 text-center mt-4">
+								<span>No groups found!</span>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12">
+							<nav
+								th:replace="~{fragments/general :: pagination(${currentPagePath}, ${currentPage}, ${totalPages}, ${page}, ${pageSize})}">
+							</nav>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
+	<script src="/js/groups.js"></script>
+	<script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+	<script src="/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

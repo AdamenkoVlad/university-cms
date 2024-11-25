@@ -1,0 +1,89 @@
+:root {
+	--border: 3px solid #8d0396;
+}
+
+body {
+	background-image: url("/photo/background.jpg");
+}
+
+img {
+	height: 30%;
+	width: 30%;
+}
+
+nav li {
+	font-size: 140%;
+}
+
+h1,
+h2 {
+	color: purple;
+	font-weight: 800;
+	font-size: 350%
+}
+
+.person-badge {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	width: 268px;
+	height: 66px;
+	background-color: white;
+	border-top-left-radius: 50px;
+	border-bottom-left-radius: 50px;
+}
+
+.reference {
+	color: blue;
+}
+
+.badge-button {
+	display: contents;
+}
+
+.row-photo-button {
+	display: contents;
+}
+
+.user-model {
+	border: var(--border);
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
+
+.user-photo {
+	height: 300px;
+	width: 350px;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
+
+.text-part {
+	width: 200px;
+	height: 66px;
+	background-color: white;
+	padding: 0px;
+}
+
+.person-badge-photo {
+	width: 68px;
+	height: 66px;
+	border-top-left-radius: 50px;
+	border-top-right-radius: 50px;
+	border-bottom-left-radius: 50px;
+	border-bottom-right-radius: 50px;
+}
+
+.square-text-up {
+	margin-top: 6px;
+	margin-bottom: 5px;
+	font-weight: bold;
+}
+
+.square-text-down {
+	margin-top: -1px;
+}

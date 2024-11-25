@@ -1,0 +1,70 @@
+:root {
+	--border: 2px solid #8d0396;
+	--radius: 10px;
+}
+
+body {
+	background-image: url("/photo/background.jpg");
+}
+
+input,
+select {
+	border: var(--border) !important;
+	border-radius: var(--radius) !important;
+}
+
+h1 {
+	font-size: 80px;
+	font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+ul {
+	list-style: none;
+}
+
+li:before {
+	content: '\2022';
+	color: red;
+	margin-right: 5px;
+}
+
+label {
+	color: #021352;
+	font-weight: 800;
+}
+
+img {
+	border: var(--border) !important;
+	border-radius: var(--radius) !important;
+}
+
+.position {
+	position: relative;
+}
+
+.custom-alert {
+	background-color: transparent;
+	border: none;
+	color: red;
+	padding: 0;
+	margin: 0;
+	font-weight: 700;
+}
+
+#file {
+	display: none;
+}
+
+#imagePreview {
+	width: 318px;
+	height: 280px;
+}
+
+#photoLabel {
+	cursor: pointer;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}

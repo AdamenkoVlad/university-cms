@@ -1,0 +1,1 @@
+ALTER TABLE university.users ADD COLUMN IF NOT EXISTS gender VARCHAR(1);

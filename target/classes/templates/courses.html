@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+
+	<head
+		th:replace="~{fragments/general.html :: head(description='The page to visualize all available courses', title='Courses')}">
+	</head>
+	<link href="/css/courses.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+	<nav th:replace="~{fragments/general.html :: navbar(${principal})}"></nav>
+	<div th:replace="~{fragments/general.html :: principalModel(${principal})}"></div>
+	<div class="container-fluid">
+		<main>
+			<div class="row">
+				<div class="col-md-4">
+					<a href="/courses">
+						<h1>Courses</h1>
+					</a>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<a sec:authorize="hasRole('ADMINISTRATOR')" href="/courses/new">
+						<button class="create-button">Create</button>
+					</a>
+				</div>
+				<div class="col-sm-6">
+					<nav class="navbar navbar-expand-lg">
+						<div class="container-fluid">
+							<div class="collapse navbar-collapse" id="navbarSupportedContent">
+								<form action="#" id="searchForm" class="d-flex ms-auto" method="GET">
+									<div class="me-2">
+										<input id="searchInput" class="form-control" type="number" placeholder="Search"
+											aria-label="Search">
+									</div>
+									<button class="btn btn-success me-2" type="submit">Search</button>
+									<div class="btn-group dropup">
+										<button type="button" class="btn btn-secondary dropdown-toggle"
+											data-bs-toggle="dropdown" aria-expanded="false">
+											Search by
+										</button>
+										<ul class="dropdown-menu dropdown-menu-lg-end text-menu"
+											aria-labelledby="dropdownMenuClickableInside">
+											<li><a id="idLink" class="dropdown-item" data-type="number">id</a></li>
+											<li><a id="courseNameLink" class="dropdown-item" data-type="text">course
+													name</a></li>
+											<li><a id="specializationLink" class="dropdown-item"
+													data-type="text">specialization</a></li>
+											<li><a id="teacherIdLink" class="dropdown-item" data-type="number">teacher
+													id</a></li>
+											<li><a id="teacherNameLink" class="dropdown-item" data-type="text">teacher
+													name</a></li>
+											<li><a id="roomIdLink" class="dropdown-item" data-type="number">room id</a>
+											</li>
+											<li><a id="roomNumberLink" class="dropdown-item" data-type="number">room
+													number</a></li>
+										</ul>
+									</div>
+								</form>
+							</div>
+						</div>
+					</nav>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12">
+					<table class="table-responsive-md table table-hover table-striped my-custom-table">
+						<thead>
+							<tr>
+								<th scope="col">Id</th>
+								<th scope="col">Specialization</th>
+								<th scope="col">Course</th>
+								<th scope="col">Credit hours</th>
+								<th sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')" scope="col">Teacher management</th>
+								<th sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')" scope="col">Student management</th>
+								<th sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')" scope="col">Lesson management</th>
+								<th class="my-custom-border" scope="col" sec:authorize="hasRole('ROLE_ADMINISTRATOR')">
+									Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="course : ${courses}">
+								<th scope="row" th:text="${course.id}"></th>
+								<td th:text="${course.specialization}"></td>
+								<td th:text="${course.courseName}"></td>
+								<td th:text="${course.creditHours}"></td>
+								<td sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')">
+									<div style="display: flex;">
+										<a th:href="@{/teachers?purpose=addToCourse&courseId={courseId} (courseId=${course.id})}">
+											<button type="button" class="btn btn-outline-success" style="margin-right: 5px; margin-left: 120px;">Add teacher</button>
+										</a>
+										<form th:action="@{/courses/deleteTeacherFromCourseById/{courseId}/courseId (courseId=${course.id})}" method="POST">
+											<button type="submit" class="btn btn-outline-danger">Delete teacher</button>
+										</form>
+									</div>
+								</td>
+								<td sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')">
+									<a th:href="@{/students?purpose=addToCourse(courseId=${course.id})}">
+										<button type="button" class="btn btn-outline-success">Add students</button>
+									</a>
+									<a th:href="@{/students/{courseName}/findAllByCourseName?purpose=deleteFromCourse&courseId={courseId} (courseName=${course.courseName}, courseId=${course.id})}">
+										<button type="button" class="btn btn-outline-warning">Manage students</button>
+									</a>
+								</td>
+								<td sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')">
+									<a th:href="@{/lessons?purpose=addToCourse(courseId=${course.id})}">
+										<button type="button" class="btn btn-outline-success">Add lessons</button>
+									</a>
+									<a th:href="@{/lessons/{courseId}/findAllByCourseId?purpose=deleteFromCourse&courseId={courseId} (courseId=${course.id})}")>
+										<button type="button" class="btn btn-outline-warning">Manage lessons</button>
+									</a>
+								</td>
+								<td class="my-custom-border" sec:authorize="hasRole('ADMINISTRATOR')">
+									<a th:href="@{/courses/{id}/update (id=${course.id})}">
+										<button type="button" class="update-button">Update</button>
+									</a>
+									<form th:action="@{/courses/{id}/delete (id=${course.id})}" method="POST">
+										<button type="submit" class="delete-button">Delete</button>
+									</form>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div th:unless="${courses.size() > 0}">
+						<div class="row">
+							<div class="col-xs-12 text-center mt-4">
+								<span>No courses found!</span>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12">
+							<nav
+								th:replace="~{fragments/general :: pagination(${currentPagePath}, ${currentPage}, ${totalPages}, ${page}, ${pageSize})}">
+							</nav>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
+	<script src="/js/courses.js"></script>
+	<script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+	<script src="/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

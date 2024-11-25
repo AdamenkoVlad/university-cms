@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<head
+		th:replace="~{fragments/general.html :: head(description='The page to update an existing course', title='Update course')}">
+	</head>
+	<link href="/css/course-update.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+	<div class="container">
+		<main>
+			<div class="row">
+				<div class="col-xs-12 text-center">
+					<h1 class="class-h1">Update course</h1>
+				</div>
+			</div>
+			<div class="row justify-content-center my-3">
+				<div class="col-lg-6">
+					<form action="/courses/save" th:object="${course}" method="POST">
+						<input type="hidden" id="csrf" th:attr="name=${_csrf.parameterName},value=${_csrf.token}" />
+						<input type="hidden" name="viewName" value="course-update">
+						<input type="hidden" name="referer" th:value="${referer}">
+						<div class="row">
+							<input type="hidden" th:field="*{id}">
+							<div class="col-sm-6">
+								<div class="form-floating my-3">
+									<select id="specialization" class="form-select" th:field="*{specialization}">
+										<option th:value="COMPUTER_SCIENCE">Computer science</option>
+										<option th:value="MEDICINE">Medicine</option>
+										<option th:value="ECONOMICS">Economics</option>
+										<option th:value="ART">Art</option>
+									</select>
+									<label for="specialization" class="form-label">Specialization:</label>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form-floating my-3">
+									<input type="text" id="courseName" class="form-control" th:field="*{courseName}"
+										required
+										th:classappend="${validationExceptions != null and 
+									!#sets.contains(validationExceptions.![#strings.toString(propertyPath)], 'save.courseDto.courseName')} ? 'is-valid' : ''">
+									<label for="courseName" class="form-label">Course name</label>
+									<span th:if="${validationExceptions != null}">
+										<span th:each="validationException : ${validationExceptions}">
+											<span
+												th:if="${'' + validationException.propertyPath == 'save.courseDto.courseName'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${validationException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</span>
+									</span>
+									<span th:if="${integrityExceptions != null}">
+										<span th:each="integrityException : ${integrityExceptions}">
+											<span th:if="${integrityException.field == 'courseName'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${integrityException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</span>
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-12">
+								<div class="mb-3">
+									<label for="courseDescription" class="form-label">Course description</label>
+									<textarea class="form-control" id="courseDescription" rows="3"
+										th:field="*{courseDescription}"></textarea>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-6 mx-auto">
+								<div class="form-floating my-3">
+									<input type="number" id="creditHours" class="form-control" th:field="*{creditHours}"
+										required
+										th:classappend="${validationExceptions != null and 
+									!#sets.contains(validationExceptions.![#strings.toString(propertyPath)], 'save.courseDto.creditHours')} ? 'is-valid' : ''">
+									<label for="creditHours" class="form-label">Credit hours</label>
+									<span th:if="${validationExceptions != null}">
+										<span th:each="validationException : ${validationExceptions}">
+											<span
+												th:if="${'' + validationException.propertyPath == 'save.courseDto.creditHours'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${validationException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</span>
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-6 text-end">
+								<a th:href="${referer}">
+									<button type="button" class="btn btn-danger btn-lg">Undo</button>
+								</a>
+							</div>
+							<div class="col-sm-6 text-start">
+								<button type="submit" class="btn btn-primary btn-lg">Update</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</main>
+	</div>
+	<script src="/webjars/bootstrap/5.3.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,10 @@
+Introduction to Computer Science
+Data Structures and Algorithms
+Computer Organization and Architecture
+Operating Systems
+Database Management Systems
+Software Engineering
+Computer Networks
+Artificial Intelligence
+Machine Learning
+Web Development

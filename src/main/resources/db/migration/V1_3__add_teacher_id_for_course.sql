@@ -1,0 +1,1 @@
+ALTER TABLE university.courses ADD COLUMN IF NOT EXISTS teacher_id BIGINT REFERENCES university.users (user_id) ON DELETE CASCADE;

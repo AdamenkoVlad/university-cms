@@ -1,0 +1,1 @@
+ALTER TABLE university.courses ALTER COLUMN course_description SET DEFAULT 'no info provided';

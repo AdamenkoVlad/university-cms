@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+	<head
+		th:replace="~{fragments/general.html :: head(description='The page to visualize a form to create a new lesson', title='Create lesson')}">
+	</head>
+	<link href="/css/lesson-create.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+	<div class="container">
+		<main>
+			<div class="row">
+				<div class="col-xs-12 text-center">
+					<h1 class="class-h1">Create lesson</h1>
+				</div>
+			</div>
+			<div class="row justify-content-center my-3">
+				<div class="col-lg-6">
+					<form action="/lessons/save" th:object="${lesson}" method="POST">
+						<input type="hidden" id="csrf" th:attr="name=${_csrf.parameterName},value=${_csrf.token}" />
+						<input type="hidden" name="viewName" value="lesson-create">
+						<input type="hidden" name="referer" th:value="${referer}">
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-floating my-3">
+									<input type="date" id="lessonDate" class="form-control" th:field="*{lessonDate}"
+										required
+										th:classappend="${validationExceptions != null and 
+																			!#sets.contains(validationExceptions.![#strings.toString(propertyPath)], 'save.lessonDto.lessonDate')} ? 'is-valid' : ''">
+									<label for="lessonDate" class="form-label">Lesson date</label>
+									<span th:if="${validationExceptions != null}">
+										<span th:each="validationException : ${validationExceptions}">
+											<span
+												th:if="${'' + validationException.propertyPath == 'save.lessonDto.lessonDate'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${validationException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</span>
+									</span>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form-floating my-3">
+									<input type="number" id="lessonNumber" class="form-control"
+										th:field="*{lessonNumber}" required
+										th:classappend="${validationExceptions != null and 
+												!#sets.contains(validationExceptions.![#strings.toString(propertyPath)], 'save.lessonDto.lessonNumber')} ? 'is-valid' : ''">
+									<label for="lessonNumber" class="form-label">lesson number</label>
+									<span th:if="${validationExceptions != null}">
+										<span th:each="validationException : ${validationExceptions}">
+											<span
+												th:if="${'' + validationException.propertyPath == 'save.lessonDto.lessonNumber'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${validationException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</span>
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-6 text-end">
+								<a th:href="${referer}">
+									<button type="button" class="btn btn-danger btn-lg">Undo</button>
+								</a>
+							</div>
+							<div class="col-sm-6 text-start">
+								<button type="submit" class="btn btn-primary btn-lg">Create</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</main>
+	</div>
+	<script src="/webjars/bootstrap/5.3.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

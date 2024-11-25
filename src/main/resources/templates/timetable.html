@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+	<head
+		th:replace="~{fragments/general.html :: head(description='The page to visualize timetable for a student', title='Timetable')}">
+	</head>
+	<link href="/css/timetable.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+	<nav th:replace="~{fragments/general.html :: navbar(${principal})}"></nav>
+	<div th:replace="~{fragments/general.html :: principalModel(${principal})}"></div>
+	<div class="container-fluid">
+		<main>
+			<div class="row">
+				<div class="col-xs-12">
+					<a>
+						<h1>[[${month}]] [[${year}]]</h1>
+					</a>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12">
+					<table class="table table-bordered">
+						<thead class="table-light">
+							<tr>
+								<th scope="col">Monday</th>
+								<th scope="col">Tuesday</th>
+								<th scope="col">Wednesday</th>
+								<th scope="col">Thursday</th>
+								<th scope="col">Friday</th>
+								<th scope="col">Saturday</th>
+								<th scope="col">Sunday</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="externalEntry : ${timetable}">
+								<td th:each="internalEntry : ${externalEntry.value}" ,
+									th:class="${internalEntry.value == null ? 'transparent-cell' : ''}">
+									<ul class="my-2">
+										<li th:each="lesson, i : ${internalEntry.value}" th:if="${i.index == 0}"
+											th:class="${lesson.lessonDate} == ${todayDate} ? 'color-red' : ''">
+											<span>[[${lesson.lessonDate}]]</span>
+										</li>
+									</ul>
+									<ul class="my-0 mx-0 py-0 px-0" style="list-style-type: none;">
+										<span th:if="${internalEntry.value != null} and ${#lists.size(internalEntry.value)} == 0">
+											<br><br><br><br>
+										</span>
+										<li th:each="lesson, i : ${internalEntry.value}"
+											th:class="${lesson.lessonDate} == ${todayDate} ? 'color-red' : ''">
+											<span>[[${lesson.courseName}]] lesson #[[${lesson.lessonNumber}]] room #[[${lesson.roomNumber}]]</span>
+										</li>
+									</ul>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6 text-end">
+					<a th:href="${currentUrl} + '?addMonths=' + ${addMonths - 1}">
+						<button type="button" class="btn btn-danger btn-lg">Previous month</button>
+					</a>
+				</div>
+				<div class="col-sm-6 text-start">
+					<a th:href="${currentUrl} + '?addMonths=' + ${addMonths + 1}">
+					<button type="button" class="btn btn-primary btn-lg">Next month</button>
+					</a>
+				</div>
+			</div>
+		</main>
+	</div>
+	<script src="/js/timetable.js"></script>
+	<script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+	<script src="/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

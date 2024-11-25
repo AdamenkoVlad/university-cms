@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+	<head
+		th:replace="~{fragments/general.html :: head(description='The page to visualize all available students',title='Students')}">
+	</head>
+	<link href="/css/students10.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+	<nav th:replace="~{fragments/general.html :: navbar(${principal})}"></nav>
+	<div sec:authorize="hasRole('ADMINISTRATOR')" th:replace="~{fragments/general.html :: studentModels(${students})}">
+	</div>
+	<div th:replace="~{fragments/general.html :: principalModel(${principal})}"></div>
+	<div class="container-fluid">
+		<main>
+			<div class="row">
+				<div class="col-md-4">
+					<a href="/students">
+						<h1>Students</h1>
+					</a>			
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<a sec:authorize="hasRole('ADMINISTRATOR')" href="/students/new">
+						<button class="create-button">Create</button>
+					</a>
+				</div>
+				<div class="col-sm-6">
+					<nav th:if="${purpose != 'deleteFromCourse'}" class="navbar navbar-expand-lg">
+						<div class="container-fluid">
+							<div class="collapse navbar-collapse" id="navbarSupportedContent">
+								<form action="#" id="searchForm" class="d-flex ms-auto" method="GET">
+									<input th:if="${purpose == 'addToCourse' or purpose == 'deleteFromCourse'}" type="hidden" name="courseId" th:value=${courseId}>
+									<input th:if="${purpose == 'addToGroup' or purpose == 'deleteFromGroup'}" type="hidden" name="groupId" th:value=${groupId}>
+									<input th:if="${purpose == 'addToCourse'}" type="hidden" name="purpose" value="addToCourse">
+									<input th:if="${purpose == 'deleteFromCourse'}" type="hidden" name="purpose" value="deleteFromCourse">
+									<input th:if="${purpose == 'addToGroup'}" type="hidden" name="purpose" value="addToGroup">
+									<input th:if="${purpose == 'deleteFromGroup'}" type="hidden" name="purpose" value="deleteFromGroup">
+									<div class="me-2">
+										<input id="searchInput" class="form-control" type="number" placeholder="Search"
+											aria-label="Search">
+									</div>
+									<button class="btn btn-success me-2" type="submit">Search</button>
+									<div class="btn-group dropup">
+										<button type="button" class="btn btn-secondary dropdown-toggle"
+											data-bs-toggle="dropdown" aria-expanded="false">
+											Search by
+										</button>
+										<ul class="dropdown-menu dropdown-menu-lg-end text-menu"
+											aria-labelledby="dropdownMenuClickableInside">
+											<li><a id="idLink" class="dropdown-item" data-type="number">id</a></li>
+											<li><a id="loginLink" class="dropdown-item" data-type="text">login</a></li>
+											<li sec:authorize="hasRole('ADMINISTRATOR')"><a id="passportLink"
+													class="dropdown-item" data-type="text">passport number</a></li>
+											<li sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')"><a
+													id="telephoneLink" class="dropdown-item" data-type="text">telephone
+													number</a></li>
+											<li><a id="nameLink" class="dropdown-item" data-type="text">name</a></li>
+											<li><a id="groupNameLink" class="dropdown-item" data-type="text">group
+													name</a></li>
+											<li><a id="courseNameLink" class="dropdown-item" data-type="text">course
+													name</a></li>
+											<li><a id="teacherNameLink" class="dropdown-item" data-type="text">teacher
+													name</a></li>
+											<li><a id="specializationLink" class="dropdown-item"
+													data-type="text">specialization</a></li>
+										</ul>
+									</div>
+								</form>
+							</div>
+						</div>
+					</nav>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12">
+					<table class="table-responsive-md table table-hover table-striped my-custom-table">
+						<thead>
+							<tr>
+								<th scope="col">Id</th>
+								<th scope="col">Name</th>
+								<th scope="col">Photo</th>
+								<th scope="col">Birth date</th>
+								<th scope="col">Gender</th>
+								<th sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')" scope="col">Email
+								</th>
+								<th sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')" scope="col">Telephone
+									number</th>
+								<th sec:authorize="hasRole('ADMINISTRATOR')" scope="col">Address</th>
+								<th sec:authorize="hasRole('ADMINISTRATOR')" scope="col">Passport number</th>
+								<th sec:authorize="hasRole('ADMINISTRATOR')" scope="col">Scholarship</th>
+								<th sec:authorize="hasRole('ADMINISTRATOR')" scope="col">Currency mark</th>
+								<th scope="col">Admission date</th>
+								<th scope="col">Specialization</th>
+								<th scope="col">Semester</th>
+								<th th:if="${purpose == 'addToCourse' or purpose == 'deleteFromCourse' or purpose == 'addToGroup' or purpose == 'deleteFromGroup'}" scope="col">Available</th>
+								<th class="my-custom-border" sec:authorize="hasRole('ADMINISTRATOR')" scope="col">Action
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr id="rowButton"
+								th:classappend="${#authorization.expression('hasRole(''ADMINISTRATOR'')')} ? 'hoverable-row' : ''"
+								th:each="student : ${students}" onclick="openModal(event)">
+								<th scope="row" th:text="${student.id}"></th>
+								<td th:text="${student.name}"></td>
+								<td>
+									<button th:disabled="${!#authorization.expression('hasRole(''ADMINISTRATOR'')')}"
+										class="row-photo-button"
+										th:attr="data-bs-target='#exampleModal' + ${student.id}" data-bs-toggle="modal">
+										<img class="m-0 p-0"
+											th:src="${student.photoUuid != null ? '/avatars/' + student.photoUuid : '/photo/default-person-photo.png'}"
+											alt="Person photo" />
+									</button>
+								</td>
+								<td th:text="${student.birthDate}"></td>
+								<td th:text="${student.gender}"></td>
+								<td sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')" th:text="${student.email}"></td>
+								<td sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')" th:text="${student.telephoneNumber}"></td>
+								<td sec:authorize="hasRole('ADMINISTRATOR')" th:text="${student.residenceAddress}"></td>
+								<td sec:authorize="hasRole('ADMINISTRATOR')" th:text="${student.passportNumber}"></td>
+								<td sec:authorize="hasRole('ADMINISTRATOR')" th:text="${student.scholarshipAmount}">
+								</td>
+								<td sec:authorize="hasRole('ADMINISTRATOR')" th:text="${student.currencyMark}"></td>
+								<td th:text="${student.admissionDate}"></td>
+								<td th:text="${student.specialization}"></td>
+								<td th:text="${student.currentSemester}"></td>
+								<td th:if="${purpose == 'addToCourse' or purpose == 'deleteFromCourse' or purpose == 'addToGroup' or purpose == 'deleteFromGroup'}">
+									<form th:if="${purpose == 'addToCourse'}"
+										th:action="@{/courses/addStudentToCourseById/{studentId}/studentId/{courseId}/courseId (studentId=${student.id}, courseId=${courseId})}"
+										method="POST">
+										<button type="submit" class="btn btn-outline-success">Add student to course</button>
+									</form>
+									<form th:if="${purpose == 'addToGroup'}"
+										th:action="@{/groups/addStudentToGroupById/{groupId}/groupId/{studentId}/studentId (studentId=${student.id}, groupId=${groupId})}"
+										method="POST">
+										<button type="submit" class="btn btn-outline-success">Add student to group</button>
+									</form>
+									<form th:if="${purpose == 'deleteFromCourse'}"
+										th:action="@{/courses/deleteStudentFromCourseById/{studentId}/studentId/{courseId}/courseId (studentId=${student.id}, courseId=${courseId})}"
+										method="POST">
+										<button type="submit" class="btn btn-outline-danger">Delete from course</button>
+									</form>
+									<form th:if="${purpose == 'deleteFromGroup'}"
+										th:action="@{/groups/deleteStudentFromGroupById/{groupId}/groupId/{studentId}/studentId (studentId=${student.id}, groupId=${groupId})}"
+										method="POST">
+										<button type="submit" class="btn btn-outline-danger">Delete from group</button>
+									</form>
+								</td>
+								<td class="my-custom-border" sec:authorize="hasRole('ADMINISTRATOR')">
+									<a th:href="@{/students/{id}/update (id=${student.id})}">
+										<button type="button" class="update-button">Update</button>
+									</a>
+									<br>
+									<form th:action="@{/students/{id}/delete (id=${student.id})}" method="POST">
+										<button type="submit" class="delete-button">Delete</button>
+									</form>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div th:unless="${students.size() > 0}">
+						<div class="row">
+							<div class="col-xs-12 text-center mt-4">
+								<span>No students found!</span>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12">
+							<nav
+								th:replace="~{fragments/general :: pagination(${currentPagePath}, ${currentPage}, ${totalPages}, ${page}, ${pageSize})}">
+							</nav>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
+	<script src="/js/students10.js"></script>
+	<script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+	<script src="/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

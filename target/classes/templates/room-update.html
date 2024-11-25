@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+	<head
+		th:replace="~{fragments/general.html :: head(description='The page to visualize a form to update the room', title='Update room')}">
+	</head>
+	<link href="/css/room-update.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+	<div class="container">
+		<main>
+			<div class="row">
+				<div class="col-xs-12 text-center">
+					<h1 class="class-h1">Update room</h1>
+				</div>
+			</div>
+			<div class="row justify-content-center my-3">
+				<div class="col-lg-6">
+					<form action="/rooms/save" th:object="${room}" method="POST">
+						<input type="hidden" id="csrf" th:attr="name=${_csrf.parameterName},value=${_csrf.token}" />
+						<input type="hidden" name="viewName" value="room-create">
+						<input type="hidden" name="referer" th:value="${referer}">
+						<div class="row">
+							<input type="hidden" th:field="*{id}">
+							<div class="col-xs-12">
+								<div class="form-floating my-3">
+									<input type="number" id="roomNumber" class="form-control" th:field="*{roomNumber}"
+										required
+										th:classappend="${(integrityExceptions != null and !#sets.contains(integrityExceptions.![#strings.toString(field)], 'roomNumber')) 
+										or (validationExceptions != null and 
+																			!#sets.contains(validationExceptions.![#strings.toString(propertyPath)], 'save.roomDto.roomNumber'))} ? 'is-valid' : ''">
+									<label for="roomNumber" class="form-label">Room number</label>
+									<span th:if="${validationExceptions != null}">
+										<span th:each="validationException : ${validationExceptions}">
+											<span
+												th:if="${'' + validationException.propertyPath == 'save.roomDto.roomNumber'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${validationException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</span>
+									</span>
+									<span th:if="${integrityExceptions != null}">
+										<span th:each="integrityException : ${integrityExceptions}">
+											<span th:if="${integrityException.field == 'roomNumber'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${integrityException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</span>
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-12">
+								<div class="form-floating my-3">
+									<input type="number" id="floor" class="form-control" th:field="*{floor}" required
+										th:classappend="${integrityExceptions != null or (validationExceptions != null and 
+												!#sets.contains(validationExceptions.![#strings.toString(propertyPath)], 'save.roomDto.floor'))} ? 'is-valid' : ''">
+									<label for="floor" class="form-label">floor</label>
+									<span th:if="${validationExceptions != null}">
+										<span th:each="validationException : ${validationExceptions}">
+											<span
+												th:if="${'' + validationException.propertyPath == 'save.roomDto.floor'}">
+												<div class="alert alert-warning custom-alert">
+													<ul>
+														<li th:text="${validationException.message}"></li>
+													</ul>
+												</div>
+											</span>
+										</span>
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-6 text-end">
+								<a th:href="${referer}">
+									<button type="button" class="btn btn-danger btn-lg">Undo</button>
+								</a>
+							</div>
+							<div class="col-sm-6 text-start">
+								<button type="submit" class="btn btn-primary btn-lg">Update</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</main>
+	</div>
+	<script src="/webjars/bootstrap/5.3.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

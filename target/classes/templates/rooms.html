@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+	<head
+		th:replace="~{fragments/general.html :: head(description='The page to visualize all available rooms',title='Rooms')}">
+	</head>
+	<link href="/css/rooms.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+	<nav th:replace="~{fragments/general.html :: navbar(${principal})}"></nav>
+	<div th:replace="~{fragments/general.html :: principalModel(${principal})}"></div>
+	<div class="container-fluid">
+		<main>
+			<div class="row">
+				<div class="col-md-4">
+					<a href="/rooms">
+						<h1>Rooms</h1>
+					</a>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<a sec:authorize="hasRole('ADMINISTRATOR')" href="/rooms/new">
+						<button class="create-button">Create</button>
+					</a>
+				</div>
+				<div class="col-sm-6">
+					<nav class="navbar navbar-expand-lg">
+						<div class="container-fluid">
+							<div class="collapse navbar-collapse" id="navbarSupportedContent">
+								<form action="#" id="searchForm" class="d-flex ms-auto" method="GET">
+									<input th:if="${purpose == 'addToLesson'}" type="hidden" name="lessonId" th:value=${lessonId}>
+									<input th:if="${purpose == 'addToLesson'}" type="hidden" name="purpose" value="addToLesson">
+									<div class="me-2">
+										<input id="searchInput" class="form-control" type="number" placeholder="Search"
+											aria-label="Search">
+									</div>
+									<button class="btn btn-success me-2" type="submit">Search</button>
+									<div class="btn-group dropup">
+										<button type="button" class="btn btn-secondary dropdown-toggle"
+											data-bs-toggle="dropdown" aria-expanded="false">
+											Search by
+										</button>
+										<ul class="dropdown-menu dropdown-menu-lg-end text-menu"
+											aria-labelledby="dropdownMenuClickableInside">
+											<li><a id="idLink" class="dropdown-item" data-type="number">id</a></li>
+											<li><a id="roomNumberLink" class="dropdown-item" data-type="number">room
+													number</a></li>
+											<li><a id="floorLink" class="dropdown-item" data-type="number">floor</a>
+											</li>
+										</ul>
+									</div>
+								</form>
+							</div>
+						</div>
+					</nav>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12">
+					<table class="table-responsive-md table table-hover table-striped my-custom-table">
+						<thead>
+							<tr>
+								<th scope="col">Id</th>
+								<th scope="col">Room number</th>
+								<th scope="col">Floor</th>
+								<th sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')" th:if="${purpose == 'addToLesson'}" scope="col">Available</th>
+								<th class="my-custom-border" sec:authorize="hasRole('ADMINISTRATOR')" scope="col">Action
+									</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="room : ${rooms}">
+								<th scope="row" th:text="${room.id}"></th>
+								<td th:text="${room.roomNumber}"></td>
+								<td th:text="${room.floor}"></td>
+								<td sec:authorize="hasRole('ADMINISTRATOR') or hasRole('TEACHER')" th:if="${purpose == 'addToLesson'}">
+									<form th:action="@{/lessons/addRoomById/{lessonId}/lessonId/{roomId}/roomId (lessonId=${lessonId}, roomId=${room.id})}" method="POST">
+										<button type="submit" class="btn btn-outline-success">Add to lesson</button>
+									</form>
+								</td>
+								<td class="my-custom-border" sec:authorize="hasRole('ADMINISTRATOR')">
+									<a th:href="@{/rooms/{id}/update (id=${room.id})}">
+										<button type="button" class="update-button">Update</button>
+									</a>
+									<br>
+									<form th:action="@{/rooms/{id}/delete (id=${room.id})}" method="POST">
+										<button type="submit" class="delete-button">Delete</button>
+									</form>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div th:unless="${rooms.size() > 0}">
+						<div class="row">
+							<div class="col-xs-12 text-center mt-4">
+								<span>No rooms found!</span>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12">
+							<nav
+								th:replace="~{fragments/general :: pagination(${currentPagePath}, ${currentPage}, ${totalPages}, ${page}, ${pageSize})}">
+							</nav>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
+	<script src="/js/rooms.js"></script>
+	<script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+	<script src="/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

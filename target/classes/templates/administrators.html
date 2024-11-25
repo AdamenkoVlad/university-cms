@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+	<head
+		th:replace="~{fragments/general.html :: head(description='The page to visualize all available administrators',title='Administrators')}">
+	</head>
+	<link href="/css/administrators.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+	<nav th:replace="~{fragments/general.html :: navbar(${principal})}"></nav>
+	<div sec:authorize="hasRole('ADMINISTRATOR')"
+		th:replace="~{fragments/general.html :: administratorModels(${administrators})}"></div>
+	<div th:replace="~{fragments/general.html :: principalModel(${principal})}"></div>
+	<div class="container-fluid">
+		<main>
+			<div class="row">
+				<div class="col-md-4">
+					<a href="/administrators">
+						<h1>Administrators</h1>
+					</a>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<a  id="administratorCreateRef" href="/administrators/new">
+						<button class="create-button">Create</button>
+					</a>
+				</div>
+				<div class="col-sm-6">
+					<nav class="navbar navbar-expand-lg">
+						<div class="container-fluid">
+							<div class="collapse navbar-collapse" id="navbarSupportedContent">
+								<form action="#" id="searchForm" class="d-flex ms-auto" method="GET">
+									<div class="me-2">
+										<input id="searchInput" class="form-control" type="number" placeholder="Search"
+											aria-label="Search">
+									</div>
+									<button class="btn btn-success me-2" type="submit">Search</button>
+									<div class="btn-group dropup">
+										<button type="button" class="btn btn-secondary dropdown-toggle"
+											data-bs-toggle="dropdown" aria-expanded="false">
+											Search by
+										</button>
+										<ul class="dropdown-menu dropdown-menu-lg-end text-menu"
+											aria-labelledby="dropdownMenuClickableInside">
+											<li><a id="idLink" class="dropdown-item" data-type="number">id</a></li>
+											<li><a id="loginLink" class="dropdown-item" data-type="text">login</a></li>
+											<li><a id="passportLink" class="dropdown-item" data-type="text">passport
+													number</a></li>
+											<li><a id="telephoneLink" class="dropdown-item" data-type="text">telephone
+													number</a></li>
+											<li><a id="nameLink" class="dropdown-item" data-type="text">name</a></li>
+										</ul>
+									</div>
+								</form>
+							</div>
+						</div>
+					</nav>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12">
+					<table id="administratorTable" class="table-responsive-md table table-hover table-striped my-custom-table">
+						<thead>
+							<tr>
+								<th scope="col">Id</th>
+								<th scope="col">Name</th>
+								<th scope="col">Photo</th>
+								<th scope="col">Birth date</th>
+								<th scope="col">Gender</th>
+								<th scope="col">Email</th>
+								<th scope="col">Telephone number</th>
+								<th scope="col">Residence address</th>
+								<th scope="col">Passport number</th>
+								<th scope="col">Salary amount</th>
+								<th scope="col">Currency mark</th>
+								<th scope="col">Employment date</th>
+								<th scope="col">Position</th>
+								<th scope="col">Working shift</th>
+								<th class="my-custom-border" scope="col">Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr id="rowButton" class="hoverable-row" th:each="administrator : ${administrators}"
+								onclick="openModal(event)">
+								<th scope="row" th:text="${administrator.id}"></th>
+								<td th:text="${administrator.name}"></td>
+								<td>
+									<button class="row-photo-button"
+										th:attr="data-bs-target='#exampleModal' + ${administrator.id}"
+										data-bs-toggle="modal">
+										<img class="m-0 p-0"
+											th:src="${administrator.photoUuid != null ? '/avatars/' + administrator.photoUuid : '/photo/default-person-photo.png'}"
+											alt="Person photo" />
+									</button>
+								</td>
+								<td th:text="${administrator.birthDate}"></td>
+								<td th:text="${administrator.gender}"></td>
+								<td th:text="${administrator.email}"></td>
+								<td th:text="${administrator.telephoneNumber}"></td>
+								<td th:text="${administrator.residenceAddress}"></td>
+								<td th:text="${administrator.passportNumber}"></td>
+								<td th:text="${administrator.salaryAmount}"></td>
+								<td th:text="${administrator.currencyMark}"></td>
+								<td th:text="${administrator.employmentDate}"></td>
+								<td th:text="${administrator.position}"></td>
+								<td th:text="${administrator.workingShift}"></td>
+								<td class="my-custom-border">
+									<a th:href="@{/administrators/{id}/update (id=${administrator.id})}">
+										<button type="button" class="update-button">Update</button>
+									</a>
+									<br>
+									<form th:action="@{/administrators/{id}/delete (id=${administrator.id})}"
+										method="POST">
+										<button type="submit" class="delete-button">Delete</button>
+									</form>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div th:unless="${administrators.size() > 0}">
+						<div class="row">
+							<div class="col-xs-12 text-center mt-4">
+								<span>No administrators found!</span>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12">
+							<nav
+								th:replace="~{fragments/general :: pagination(${currentPagePath}, ${currentPage}, ${totalPages}, ${page}, ${pageSize})}">
+							</nav>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
+	<script src="/js/administrators10.js"></script>
+	<script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+	<script src="/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

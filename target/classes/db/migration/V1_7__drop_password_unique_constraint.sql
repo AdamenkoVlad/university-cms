@@ -1,0 +1,1 @@
+ALTER TABLE university.users DROP CONSTRAINT IF EXISTS users_password_key;
